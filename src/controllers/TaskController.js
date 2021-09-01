@@ -1,16 +1,12 @@
-const { validationResult } = require("express-validator");
+const { Op } = require("sequelize");
+
 const Task = require("../models/Task");
+const User = require("../models/User");
 
 module.exports = {
   async create(request, response) {
     const { description } = request.body;
     const { userId } = request;
-
-    const errors = validationResult(request).array();
-    
-    if(errors.length > 0) {
-      return response.status(400).json({ error: errors[0].msg });
-    }
 
     const task = await Task.create({
       userId,
@@ -65,5 +61,31 @@ module.exports = {
     });
 
     return response.status(204).send();
+  },
+
+  async list(request, response) {
+    const { search, order } = request.query;
+    let { orderBy } = request.query;
+
+    orderBy = orderBy.split(" ");
+
+    const tasks = await Task.findAll({
+      include: {
+        association: "user",
+        required: true,
+        attributes: ["name"]
+      },
+      where: {
+        [Op.or]: {
+          description: {
+            [Op.like]: `%${search}%`
+          },
+          status: search,
+        },
+      },
+      order: [[...orderBy, order]]
+    });
+
+    return response.json(tasks)
   }
 }

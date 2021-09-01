@@ -1,16 +1,8 @@
-const { validationResult } = require("express-validator");
-
 const User = require("../models/User");
 
 module.exports = {
   async create(request, response) {
     const { name, email, password } = request.body;
-
-    const errors = validationResult(request).array();
-
-    if(errors.length > 0) {
-      return response.status(400).json({ error: errors[0].msg });
-    }
 
     const userAlreadyExists = await User.findOne({
       where: {
