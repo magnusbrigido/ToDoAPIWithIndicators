@@ -4,6 +4,7 @@ const { body } = require("express-validator");
 const UserController = require("./controllers/UserController");
 const AuthenticateUserController = require("./controllers/AuthenticateUserController");
 const TaskController = require("./controllers/TaskController");
+const IndicatorsController = require("./controllers/IndicatorsController");
 
 const ensureAuthentication = require("./middlewares/ensureAuthentication");
 const ensureAdmin = require("./middlewares/ensureAdmin");
@@ -64,5 +65,12 @@ routes.put(
 );
 
 routes.get("/tasks/list", ensureAuthentication, ensureAdmin, TaskController.list);
+
+/* INDICATORS */
+routes.get("/indicators/doneTasks", IndicatorsController.totalDoneTasks);
+routes.get("/indicators/:userId/averageDoneTasks", IndicatorsController.averageDoneTasks);
+routes.get("/indicators/:userId/timeAverageCreatedToRunning", IndicatorsController.timeAverageCreatedToRunning);
+routes.get("/indicators/:userId/timeAverageRunningToDone", IndicatorsController.timeAverageRunningToDone);
+
 
 module.exports = routes;
