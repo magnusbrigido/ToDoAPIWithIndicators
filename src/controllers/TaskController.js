@@ -67,7 +67,7 @@ module.exports = {
     const { search, order } = request.query;
     let { orderBy } = request.query;
 
-    orderBy = orderBy.split(" ");
+    orderBy = orderBy.split(".");
 
     const tasks = await Task.findAll({
       include: {
